@@ -1,0 +1,32 @@
+DELIMITER $$
+
+CREATE TRIGGER cart-update
+before update
+ON CART FOR EACH ROW
+BEGIN
+       DECLARE rc INT;
+
+       select count(*)
+       INTO rc
+       from CART 
+       where pid=new.pid;   
+
+       IF rc>0 THEN
+       UPDATE CART 
+       set quantity=quantity+1,
+       where CART.pid=new.pid;
+
+       UPDATE CART 
+       set amount=quantity*price,
+       where CART.pid=new.pid;
+
+       END IF;
+
+       IF rc=0
+       INSERT INTO CART
+       VALUES(new.pid,new.pname,1,new.price,new.amount);
+
+ END $$
+DELIMITER ;
+
+

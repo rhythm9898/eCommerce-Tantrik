@@ -1,0 +1,29 @@
+DELIMITER $$
+
+CREATE TRIGGER cart-update
+before update
+ON CART FOR EACH ROW
+BEGIN
+       DECLARE rc INT;
+
+       SELECT count(*)
+       INTO rc
+       from user_data
+       where email=new.email;
+
+       IF rc=0
+       INSERT INTO user_data
+       VALUES(new.name,new.address,new.city,new.state,new.email,new.mobileno,new.password);
+       END IF;
+
+
+       IF rc>0
+
+       DECLARE ermsg VARCHAR(50);
+       ermsg="User already has an account. Login to your account.";
+       SELECT  ermsg;
+
+       END IF;
+END $$
+
+DELIMITER ;
